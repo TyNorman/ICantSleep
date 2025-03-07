@@ -1,18 +1,51 @@
 .audioPlayer {
-    align-items: center;
+    --red-colour: #e70012;
+
     display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 700px;
+}
+
+.trackDisplay {
+    display: flex;
+    align-items: center;
+}
+
+.trackTitle {
+    color: white;
+    font-family: monospace;
+    font-size: 24px;
+    margin: 20px;
 }
 
 .timeDisplay {
     color: white;
     font-family: monospace;
     font-size: 16px;
-    margin: 20px;
+    margin-right: 20px;
 }
 
+.durationDisplay {
+    color: white;
+    font-family: monospace;
+    font-size: 16px;
+    margin-left: 20px;
+}
+
+.buttonArea {
+    display: inline;
+    padding: 20px;
+}
+
+/* outline:0 is horrendous for accessibility never do this in a professional project */
+.audioPlayer button:focus {
+    outline-color: #bc1421;
+}
+
+/* Play/Pause button and icon */
 .playPauseButton {
-    background-color: red;
+    background-color: var(--red-colour);
     color: white;
     border: none;
     border-radius: 50%;
@@ -33,12 +66,37 @@
     right: 15px;
 }
 
+/* Previous/Next buttons and icon */
+.previousNextButton {
+    background-color: var(--red-colour);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+    font-size: 32px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.iconBack {
+    position: relative;
+    right: 18px;
+}
+
+.iconForward {
+    position: relative;
+    right: 12px;
+}
+
 .progressBar {
     --bar-bg: lightgrey;
     --seek-before-width: 0;
-    --seek-before-color: red;
-    --knob: red;
-    --selected-knob: red;
+    --seek-before-color: var(--red-colour);
+    --knob: var(--red-colour);
+    --selected-knob: var(--red-colour);
 
     appearance: none;
     background: var(--bar-bg);
@@ -134,4 +192,34 @@
 .progressBar:active::-moz-range-thumb {
     transform: scale(1.2);
     background: var(--selected-knob);
+}
+
+.rainDisplay {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.volumeButton {
+    background-color: var(--red-colour);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+    font-size: 32px;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconVolume{
+    position: relative;
+    right: 14px;
+}
+
+.rainVolume {
+    color: white;
+    font-family: monospace;
+    font-size: 24px;
+    margin: 20px;
 }

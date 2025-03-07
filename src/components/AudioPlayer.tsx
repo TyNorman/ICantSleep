@@ -2,36 +2,45 @@
 
 import './AudioPlayer.css'
 
-import { SlControlPlay, SlControlPause } from "react-icons/sl";
+//Icons
+import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff } from "react-icons/sl";
 
 import testMusic from '../assets/audio/snes/Donkey Kong Country 2/1-11. Forest Interlude.mp3'
 import testRain from '../assets/audio/rain/20 Rain.mp3'
 
 import { useRef, useState, useEffect } from 'react';
+import { VolumeSlider } from './VolumeSlider';
 
 const AudioPlayer = () => {
     //States
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const [trackTitle, setTrackTitle] = useState("---");
 
     //References
-    const audioPlayer = useRef<HTMLAudioElement>(null); //Reference for audio component
+    const musicPlayer = useRef<HTMLAudioElement>(null); //Reference for audio component to play a song
+    const rainPlayer = useRef<HTMLAudioElement>(null);  //Reference to play rain audio
     const progressBar = useRef<HTMLInputElement>(null); //Reference for the current song progress bar
     const animationRef = useRef<number>(null); //Reference for animation
 
     //UseEffect
     useEffect(() => {
-        if (audioPlayer.current) {
-            const seconds = Math.floor(audioPlayer.current.duration);
+        if (musicPlayer.current) {
+            const seconds = Math.floor(musicPlayer.current.duration);
             setDuration(seconds);
 
             if (progressBar.current) {
                 progressBar.current.max = seconds.toString();
             }
+
+            if (musicPlayer.current && musicPlayer.current.src) {
+                const trackTitle = decodeURI(musicPlayer.current.src.split("/").pop() || "---");
+                setTrackTitle(trackTitle);
+            }
         }
             
-    }, [audioPlayer?.current?.onloadedmetadata, audioPlayer?.current?.readyState]);
+    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState]);
 
     //Functions
     const calculateTime = (secs:number) => {
@@ -45,13 +54,15 @@ const AudioPlayer = () => {
         const prevValue = isPlaying;
         setIsPlaying(!prevValue);
 
-        if (audioPlayer.current) {
+        if (musicPlayer.current && rainPlayer.current) {
             if (!prevValue) {
-                audioPlayer.current.play();
+                musicPlayer.current.play();
+                rainPlayer.current.play();
 
                 animationRef.current = requestAnimationFrame(whilePlaying);
             } else { 
-                audioPlayer.current.pause();
+                musicPlayer.current.pause();
+                rainPlayer.current.pause();
 
                 if (animationRef.current)
                     cancelAnimationFrame(animationRef.current);
@@ -61,16 +72,16 @@ const AudioPlayer = () => {
     }
 
     const changeRange = () => { //Function to change the range slider
-        if (audioPlayer.current && progressBar.current) {
+        if (musicPlayer.current && progressBar.current) {
             var currentProgress = parseInt(progressBar.current.value);
-            audioPlayer.current.currentTime = currentProgress;
+            musicPlayer.current.currentTime = currentProgress;
             changePlayerCurrentTime();
         }
     }
 
     const whilePlaying = () => { //Function to animate seconds counter every 1 sec tick
-        if (progressBar.current && audioPlayer.current) {
-            progressBar.current.value = audioPlayer.current.currentTime.toString();
+        if (progressBar.current && musicPlayer.current) {
+            progressBar.current.value = musicPlayer.current.currentTime.toString();
             changePlayerCurrentTime();
             if (animationRef.current)
                 animationRef.current = requestAnimationFrame(whilePlaying); //Replay the animationRef upon completion
@@ -78,19 +89,31 @@ const AudioPlayer = () => {
     }
 
     const changePlayerCurrentTime = () => { //Function to update the current time based on progress
-        if (progressBar.current && audioPlayer.current) {
+        if (progressBar.current && musicPlayer.current) {
             var currentProgress = parseInt(progressBar.current.value);
-            progressBar.current.style.setProperty('--seek-before-width', `${currentProgress / duration * 100}%`); //Need to add % at the end for the 
+            progressBar.current.style.setProperty('--seek-before-width', `${currentProgress / duration * 100}%`); //Need to add % at the end for the CSS
             setCurrentTime(currentProgress);
         }
     }
 
+    const toggleVolumeRain = () => {
+        //Show/Hide Volume controls for rain
+    }
+
     return(
         <div className="audioPlayer">
-            <audio ref={audioPlayer} src={testMusic} preload="metadata"></audio>
-            <button className="playPauseButton" onClick={toggleSong}>
-                { isPlaying ? <SlControlPause className="iconPause" /> : <SlControlPlay className="iconPlay"/> }
-            </button>
+           {/* HTMLAudioElement audio tracks */}
+            <audio ref={rainPlayer} src={testRain} preload="metadata"></audio>
+            <audio ref={musicPlayer} src={testMusic} preload="metadata"></audio>
+
+            <div className="rainDisplay">
+                <div className="rainVolume" onClick={toggleVolumeRain}>Rain Volume</div>
+                <button className="volumeButton">  <SlVolume2 className="iconVolume"/>  </button>
+                <VolumeSlider/>
+            </div>
+
+            <div className="trackTitle">{trackTitle}</div>
+            <div className="trackDisplay">
 
             {/* Current Time */} 
             <div className="timeDisplay">{calculateTime(currentTime)}</div>
@@ -101,8 +124,16 @@ const AudioPlayer = () => {
             </div>
 
             {/* Duration */}
-            <div className="timeDisplay">{(duration && !isNaN(duration)) && calculateTime(duration)}</div>
+            <div className="durationDisplay">{(duration && !isNaN(duration)) && calculateTime(duration)}</div>
+            </div>
 
+            <div className="buttonArea">
+                <button className="previousNextButton">  <SlControlRewind className="iconBack"/>  </button>
+                <button className="playPauseButton" onClick={toggleSong}>
+                    { isPlaying ? <SlControlPause className="iconPause" /> : <SlControlPlay className="iconPlay"/> }
+                </button>
+                <button className="previousNextButton"> <SlControlForward className="iconForward"/> </button>
+            </div>
         </div>
     )
 }

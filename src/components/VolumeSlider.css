@@ -1,0 +1,56 @@
+.volumeSlider {
+    --red-colour: #e70012;
+    --grey-colour: #b5babf;
+
+}
+
+.volumeBar {
+    --knob: white;
+    --vol-before-width: 50%;
+    --vol-before-color: white;
+    --bar-bg: darkgrey;
+
+    appearance: none;
+    background: var(--bar-bg);
+    border-radius: 10px;
+    position: relative;
+    width: 100%;
+    height: 11px;
+    outline: none;    
+}
+
+.volumeBar::before {
+    content: '';
+    height: 11px;
+    width: var(--vol-before-width);
+    background-color: var(--vol-before-color);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+
+/* Knob - Chrome and Safari */
+.volumeBar::-webkit-slider-thumb {
+    appearance: none;
+    transform: scale(1);
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--knob);
+    cursor: pointer;
+    position: relative;
+    margin: -2px 0 0 0;
+    z-index: 3;
+    box-sizing: border-box;
+}
+
+/* Knob while dragging */
+.volumeBar:active::-webkit-slider-thumb {
+     transform: scale(1.5);
+     background: white;
+}
