@@ -17,6 +17,15 @@ const AudioPlayer = () => {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [trackTitle, setTrackTitle] = useState("---");
+    const [indexSong, setIndexSong] = useState(0);
+
+    //List of all songs in the database
+    const [songList, setSongList] = useState([
+        { title: "", src: "", game: "", game_system: "" }
+    ]);
+
+    const [currentSongSrc, setCurrentSongSrc] = useState("");
+    const [currentSong, setCurrentSong] = useState({});
 
     //References
     const musicPlayer = useRef<HTMLAudioElement>(null); //Reference for audio component to play a song
@@ -24,8 +33,57 @@ const AudioPlayer = () => {
     const progressBar = useRef<HTMLInputElement>(null); //Reference for the current song progress bar
     const animationRef = useRef<number>(null); //Reference for animation
 
-    //UseEffect
+    //UseEffects
     useEffect(() => {
+        addEventListener('onSongsLoaded', handleSongsLoaded);
+        preloadAudio();
+    }, []);
+
+
+    useEffect(() => {
+        updateTrackInfo();
+            
+    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState, indexSong]);
+
+    useEffect(() => {
+        if (songList.length > 0 && songList[indexSong].title !== "") {
+            console.log('Updated songList:', songList);
+            setCurrentSongSrc(songList[indexSong].src); // Set the current song to the first song in the list
+        }
+    }, [songList]);
+
+    useEffect(() => {
+        if (musicPlayer.current && rainPlayer.current && currentSongSrc) {
+
+            musicPlayer.current.src = '/src/assets/audio/'+currentSongSrc;
+            musicPlayer.current.load();
+            console.log("Current song: " + currentSongSrc);
+            updateTrackInfo();
+
+            if (isPlaying) {
+                musicPlayer.current.play();
+                rainPlayer.current.play();
+            } else {
+                musicPlayer.current.pause();
+                rainPlayer.current.pause();
+            }
+        }
+    }, [currentSongSrc, indexSong]);
+
+    /*
+    useEffect(() => {
+        if (songList.length > 0 && songList[0].title !== "") {
+            console.log('Updated songList:', songList);
+            setCurrentSong(randomSong());
+
+            console.log("Current song: " + currentSong);
+        }
+    }, [songList]);
+    */
+
+    //Functions
+    const updateTrackInfo = () => {
+        console.log("updateTrackInfo()");
         if (musicPlayer.current) {
             const seconds = Math.floor(musicPlayer.current.duration);
             setDuration(seconds);
@@ -39,10 +97,8 @@ const AudioPlayer = () => {
                 setTrackTitle(trackTitle);
             }
         }
-            
-    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState]);
+    }
 
-    //Functions
     const calculateTime = (secs:number) => {
         const minutes = Math.floor(secs / 60);
         const seconds = Math.floor(secs % 60);
@@ -50,11 +106,19 @@ const AudioPlayer = () => {
         return `${minutes}:${returnSeconds}`;
     }
 
+    const changeSong= () => {
+        console.log("change song()");
+        setCurrentSongSrc(songList[indexSong].src);
+
+        //Retain the playing/paused state when switching songs but this has to happen later
+    }
+
     const toggleSong = () => {
         const prevValue = isPlaying;
         setIsPlaying(!prevValue);
 
         if (musicPlayer.current && rainPlayer.current) {
+            console.log('musicPlayer src: ' + musicPlayer.current.src);
             if (!prevValue) {
                 musicPlayer.current.play();
                 rainPlayer.current.play();
@@ -69,6 +133,24 @@ const AudioPlayer = () => {
             }
         }
         
+    }
+
+    const previousSong = () => {
+        if (indexSong > 0)
+            setIndexSong(indexSong - 1);
+        else
+            setIndexSong(songList.length - 1);
+
+        changeSong();
+    }
+
+    const nextSong = () => {
+        if (indexSong < songList.length - 1)
+            setIndexSong(indexSong + 1);
+        else
+            setIndexSong(0);
+
+            changeSong();
     }
 
     const changeRange = () => { //Function to change the range slider
@@ -100,6 +182,33 @@ const AudioPlayer = () => {
         //Show/Hide Volume controls for rain
     }
 
+    const randomSong = () => {
+        var randSong = songList[Math.floor(Math.random() * songList.length)].src;
+
+        console.log("randSong: " + songList.length);
+        randSong = songList[2].src;
+
+        return randSong;
+    }
+
+    //Preloading
+    const preloadAudio = async () => {
+        try {
+            const response = await fetch('./src/songlist.json');
+            const songs = await response.json();
+
+            console.log('Loaded songs: ' + songs);
+
+            setSongList(songs);
+        } catch (error) {
+            console.error('Error loading song list:', error);
+        }
+    }
+
+    const handleSongsLoaded = () => {
+        console.log('Songs loaded:', songList);
+    }
+
     return(
         <div className="audioPlayer">
            {/* HTMLAudioElement audio tracks */}
@@ -128,11 +237,11 @@ const AudioPlayer = () => {
             </div>
 
             <div className="buttonArea">
-                <button className="previousNextButton">  <SlControlRewind className="iconBack"/>  </button>
+                <button className="previousNextButton" onClick={previousSong}>  <SlControlRewind className="iconBack"/>  </button>
                 <button className="playPauseButton" onClick={toggleSong}>
                     { isPlaying ? <SlControlPause className="iconPause" /> : <SlControlPlay className="iconPlay"/> }
                 </button>
-                <button className="previousNextButton"> <SlControlForward className="iconForward"/> </button>
+                <button className="previousNextButton" onClick={nextSong}> <SlControlForward className="iconForward"/> </button>
             </div>
         </div>
     )
