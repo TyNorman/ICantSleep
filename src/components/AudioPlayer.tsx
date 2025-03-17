@@ -11,13 +11,25 @@ import testRain from '../assets/audio/rain/20 Rain.mp3'
 import { useRef, useState, useEffect } from 'react';
 import { VolumeSlider } from './VolumeSlider';
 
+//TO DO:
+// - Volume slider for rain
+// - Volume slider for music
+// - Song shuffling (Fisher–Yates shuffle array)
+// - Sleep Timer
+
+
+
 const AudioPlayer = () => {
     //States
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [trackTitle, setTrackTitle] = useState("---");
-    const [indexSong, setIndexSong] = useState(0);
+    const [trueSongIndex, setTrueSongIndex] = useState(0); //Actual index of song
+
+    //Volume States
+    const [rainVolume, setRainVolume] = useState(50);
+    const [musicVolume, setMusicVolume] = useState(50);
 
     //List of all songs in the database
     const [songList, setSongList] = useState([
@@ -27,6 +39,11 @@ const AudioPlayer = () => {
     const [currentSongSrc, setCurrentSongSrc] = useState("");
     const [currentSong, setCurrentSong] = useState({});
 
+    //Song randomization
+    const [songIndexes, setSongIndexes] = useState<number[]>([]); //Array of song indexes to randomize the song list
+    const [currentRandIndex, setCurrentRandIndex] = useState(0); //Current index of the randomized song list
+    const [hasInitializedShuffle, setInitShuffle] = useState(false); // Flag to indicate if songs have been shuffled
+
     //References
     const musicPlayer = useRef<HTMLAudioElement>(null); //Reference for audio component to play a song
     const rainPlayer = useRef<HTMLAudioElement>(null);  //Reference to play rain audio
@@ -34,25 +51,40 @@ const AudioPlayer = () => {
     const animationRef = useRef<number>(null); //Reference for animation
 
     //UseEffects
-    useEffect(() => {
-        addEventListener('onSongsLoaded', handleSongsLoaded);
+    useEffect(() => { //Initial setup
+        window.addEventListener('volumeChange', () => setRainVolume(rainVolume));
         preloadAudio();
     }, []);
 
-
-    useEffect(() => {
+    useEffect(() => { //Update track info when the song has loaded
         updateTrackInfo();
             
-    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState, indexSong]);
+    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState, trueSongIndex]);
 
+    //Populate the SongIndexes to randomize
     useEffect(() => {
-        if (songList.length > 0 && songList[indexSong].title !== "") {
+        if (songList.length > 0 && songList[trueSongIndex].title !== "") {
             console.log('Updated songList:', songList);
-            setCurrentSongSrc(songList[indexSong].src); // Set the current song to the first song in the list
+
+            //Shuffle
+             // Create and set song indexes
+             const indexes = songList.map((_, index) => index);
+             setSongIndexes(indexes);
         }
     }, [songList]);
 
-    useEffect(() => {
+    useEffect(() => { //Randomize the SongIndexes to create a shuffled playlist
+        if (songIndexes.length > 0 && !hasInitializedShuffle) {
+            shuffleSongs();
+            setInitShuffle(true);
+
+
+            setTrueSongIndex(songIndexes[currentRandIndex]);
+            setCurrentSongSrc(songList[songIndexes[currentRandIndex]].src); // Set the current song to the first song in the list
+        }
+    }, [songIndexes, hasInitializedShuffle]);
+
+    useEffect(() => { //Change the song when the song index changes
         if (musicPlayer.current && rainPlayer.current && currentSongSrc) {
 
             musicPlayer.current.src = '/src/assets/audio/'+currentSongSrc;
@@ -68,22 +100,17 @@ const AudioPlayer = () => {
                 rainPlayer.current.pause();
             }
         }
-    }, [currentSongSrc, indexSong]);
+    }, [currentSongSrc, trueSongIndex]);
 
-    /*
+    //Volume Change useEffects
     useEffect(() => {
-        if (songList.length > 0 && songList[0].title !== "") {
-            console.log('Updated songList:', songList);
-            setCurrentSong(randomSong());
-
-            console.log("Current song: " + currentSong);
+        if (rainPlayer.current) {
+            rainPlayer.current.volume = (rainVolume / 100);
         }
-    }, [songList]);
-    */
+    }), [rainVolume];
 
     //Functions
     const updateTrackInfo = () => {
-        console.log("updateTrackInfo()");
         if (musicPlayer.current) {
             const seconds = Math.floor(musicPlayer.current.duration);
             setDuration(seconds);
@@ -107,10 +134,7 @@ const AudioPlayer = () => {
     }
 
     const changeSong= () => {
-        console.log("change song()");
-        setCurrentSongSrc(songList[indexSong].src);
-
-        //Retain the playing/paused state when switching songs but this has to happen later
+        setCurrentSongSrc(songList[trueSongIndex].src);
     }
 
     const toggleSong = () => {
@@ -136,21 +160,23 @@ const AudioPlayer = () => {
     }
 
     const previousSong = () => {
-        if (indexSong > 0)
-            setIndexSong(indexSong - 1);
+        if (currentRandIndex > 0)
+            setCurrentRandIndex(currentRandIndex - 1);
         else
-            setIndexSong(songList.length - 1);
+            setCurrentRandIndex(songIndexes.length - 1);
 
+        setTrueSongIndex(songIndexes[currentRandIndex]);
         changeSong();
     }
 
     const nextSong = () => {
-        if (indexSong < songList.length - 1)
-            setIndexSong(indexSong + 1);
+        if (currentRandIndex < songIndexes.length - 1)
+            setCurrentRandIndex(currentRandIndex + 1);
         else
-            setIndexSong(0);
+            setCurrentRandIndex(0);
 
-            changeSong();
+        setTrueSongIndex(songIndexes[currentRandIndex]);
+        changeSong();
     }
 
     const changeRange = () => { //Function to change the range slider
@@ -182,13 +208,27 @@ const AudioPlayer = () => {
         //Show/Hide Volume controls for rain
     }
 
-    const randomSong = () => {
-        var randSong = songList[Math.floor(Math.random() * songList.length)].src;
+    const shuffleSongs = () => {
+        var currentIndex = songList.length;
+        var shuffleArray = [...songIndexes];
+        
+        console.log("shuffle array: " + shuffleArray);
+        
+        while (currentIndex != 0) {
+            var randIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
 
-        console.log("randSong: " + songList.length);
-        randSong = songList[2].src;
+            [shuffleArray[currentIndex], shuffleArray[randIndex]] = [
+                shuffleArray[randIndex], shuffleArray[currentIndex]];
+        }
 
-        return randSong;
+        setSongIndexes(shuffleArray);
+        console.log("Shuffled songs: " + songIndexes);
+    }
+
+    const handleSongEnded = () => {
+        console.log("handleSongEnded()");
+        nextSong();
     }
 
     //Preloading
@@ -205,20 +245,17 @@ const AudioPlayer = () => {
         }
     }
 
-    const handleSongsLoaded = () => {
-        console.log('Songs loaded:', songList);
-    }
-
     return(
         <div className="audioPlayer">
            {/* HTMLAudioElement audio tracks */}
             <audio ref={rainPlayer} src={testRain} preload="metadata"></audio>
-            <audio ref={musicPlayer} src={testMusic} preload="metadata"></audio>
+            <audio ref={musicPlayer} src={testMusic} preload="metadata" onEnded={handleSongEnded}></audio>
 
             <div className="rainDisplay">
                 <div className="rainVolume" onClick={toggleVolumeRain}>Rain Volume</div>
                 <button className="volumeButton">  <SlVolume2 className="iconVolume"/>  </button>
-                <VolumeSlider/>
+                <VolumeSlider volume={rainVolume} setVolume={setRainVolume} />
+
             </div>
 
             <div className="trackTitle">{trackTitle}</div>
