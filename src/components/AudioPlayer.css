@@ -17,6 +17,7 @@
     font-family: monospace;
     font-size: 24px;
     margin: 20px;
+    text-align: center;
 }
 
 .timeDisplay {
@@ -222,4 +223,43 @@
     font-family: monospace;
     font-size: 24px;
     margin: 20px;
+}
+
+.timerInputLabel {
+    color: white;
+    font-family: monospace;
+    font-size: 24px;
+    margin: 20px;
+    text-align: center;
+}
+
+.timerRemaining {
+    color: white;
+    font-family: monospace;
+    font-size: 24px;
+    margin: 20px;
+    text-align: center;
+}
+
+.timerInput {
+    background-color: white;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.timerButton {
+    background-color: var(--red-colour);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+    font-size: 32px;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconTimer{
+    position: relative;
+    right: 15px;
 }

@@ -3,7 +3,7 @@
 import './AudioPlayer.css'
 
 //Icons
-import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff } from "react-icons/sl";
+import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff, SlClock } from "react-icons/sl";
 
 import testMusic from '../assets/audio/snes/Donkey Kong Country 2/1-11. Forest Interlude.mp3'
 import testRain from '../assets/audio/rain/20 Rain.mp3'
@@ -12,12 +12,10 @@ import { useRef, useState, useEffect } from 'react';
 import { VolumeSlider } from './VolumeSlider';
 
 //TO DO:
-// - Volume slider for rain
 // - Volume slider for music
-// - Song shuffling (Fisher–Yates shuffle array)
+// - Show/Hide volume sliders
 // - Sleep Timer
-
-
+//  - timer should change while running and update the remaining time as long as it's greater than the previous time
 
 const AudioPlayer = () => {
     //States
@@ -48,6 +46,8 @@ const AudioPlayer = () => {
     const musicPlayer = useRef<HTMLAudioElement>(null); //Reference for audio component to play a song
     const rainPlayer = useRef<HTMLAudioElement>(null);  //Reference to play rain audio
     const progressBar = useRef<HTMLInputElement>(null); //Reference for the current song progress bar
+    const timerHours = useRef<HTMLInputElement>(null); //Reference for the timer hours input
+    const timerMinutes = useRef<HTMLInputElement>(null); //Reference for the timer minutes input
     const animationRef = useRef<number>(null); //Reference for animation
 
     //UseEffects
@@ -74,13 +74,16 @@ const AudioPlayer = () => {
     }, [songList]);
 
     useEffect(() => { //Randomize the SongIndexes to create a shuffled playlist
-        if (songIndexes.length > 0 && !hasInitializedShuffle) {
-            shuffleSongs();
-            setInitShuffle(true);
-
-
-            setTrueSongIndex(songIndexes[currentRandIndex]);
-            setCurrentSongSrc(songList[songIndexes[currentRandIndex]].src); // Set the current song to the first song in the list
+        if (songIndexes.length > 0) {
+            if (!hasInitializedShuffle) { //Shuffle the playlist and set the flag to true
+                shuffleSongs();
+                setInitShuffle(true);
+            }
+            else { //Start with a randomized song
+                console.log("Init song - songIndexes: " + songIndexes);
+                setTrueSongIndex(songIndexes[currentRandIndex]);
+                setCurrentSongSrc(songList[songIndexes[currentRandIndex]].src); // Set the current song to the first song in the list
+            }
         }
     }, [songIndexes, hasInitializedShuffle]);
 
@@ -135,6 +138,7 @@ const AudioPlayer = () => {
 
     const changeSong= () => {
         setCurrentSongSrc(songList[trueSongIndex].src);
+        updateTrackInfo();
     }
 
     const toggleSong = () => {
@@ -208,11 +212,13 @@ const AudioPlayer = () => {
         //Show/Hide Volume controls for rain
     }
 
+    const runTimer = () => {
+        console.log("runTimer()");
+    }
+
     const shuffleSongs = () => {
         var currentIndex = songList.length;
         var shuffleArray = [...songIndexes];
-        
-        console.log("shuffle array: " + shuffleArray);
         
         while (currentIndex != 0) {
             var randIndex = Math.floor(Math.random() * currentIndex);
@@ -223,7 +229,6 @@ const AudioPlayer = () => {
         }
 
         setSongIndexes(shuffleArray);
-        console.log("Shuffled songs: " + songIndexes);
     }
 
     const handleSongEnded = () => {
@@ -251,6 +256,16 @@ const AudioPlayer = () => {
             <audio ref={rainPlayer} src={testRain} preload="metadata"></audio>
             <audio ref={musicPlayer} src={testMusic} preload="metadata" onEnded={handleSongEnded}></audio>
 
+            {/* Timer */}
+            <div className="timer">
+                <div className="timerInputLabel">Timer</div>
+                <div className="timerRemaining">00:00</div>
+                    <input type="number" className="timerInput" defaultValue="0" min="0" max="23" ref={timerHours}/>
+                    <input type="number" className="timerInput" defaultValue="0" min="0" max="59" ref={timerMinutes}/>
+                    <button className="timerButton" onClick={runTimer}>  <SlClock className="iconTimer"/>  </button>
+            </div>
+
+            {/* Rain Volume Slider */}
             <div className="rainDisplay">
                 <div className="rainVolume" onClick={toggleVolumeRain}>Rain Volume</div>
                 <button className="volumeButton">  <SlVolume2 className="iconVolume"/>  </button>
