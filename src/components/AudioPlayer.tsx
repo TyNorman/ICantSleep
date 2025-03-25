@@ -9,13 +9,19 @@ import testMusic from '../assets/audio/snes/Donkey Kong Country 2/1-11. Forest I
 import testRain from '../assets/audio/rain/20 Rain.mp3'
 
 import { useRef, useState, useEffect } from 'react';
+
 import { VolumeSlider } from './VolumeSlider';
+import { Timer } from './Timer';
 
 //TO DO:
 // - Volume slider for music
 // - Show/Hide volume sliders
-// - Sleep Timer
+
+// SLEEP TIMER
 //  - timer should change while running and update the remaining time as long as it's greater than the previous time
+// - Can play/pause a song independent of the timer setting
+// - Stop music once timer stops
+
 
 const AudioPlayer = () => {
     //States
@@ -212,10 +218,6 @@ const AudioPlayer = () => {
         //Show/Hide Volume controls for rain
     }
 
-    const runTimer = () => {
-        console.log("runTimer()");
-    }
-
     const shuffleSongs = () => {
         var currentIndex = songList.length;
         var shuffleArray = [...songIndexes];
@@ -257,13 +259,7 @@ const AudioPlayer = () => {
             <audio ref={musicPlayer} src={testMusic} preload="metadata" onEnded={handleSongEnded}></audio>
 
             {/* Timer */}
-            <div className="timer">
-                <div className="timerInputLabel">Timer</div>
-                <div className="timerRemaining">00:00</div>
-                    <input type="number" className="timerInput" defaultValue="0" min="0" max="23" ref={timerHours}/>
-                    <input type="number" className="timerInput" defaultValue="0" min="0" max="59" ref={timerMinutes}/>
-                    <button className="timerButton" onClick={runTimer}>  <SlClock className="iconTimer"/>  </button>
-            </div>
+            <Timer/>
 
             {/* Rain Volume Slider */}
             <div className="rainDisplay">

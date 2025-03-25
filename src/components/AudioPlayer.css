@@ -242,7 +242,11 @@
 }
 
 .timerInput {
-    background-color: white;
+    background-color: red;
+    font-family: monospace;
+    color: white;
+    font-size: 18px;
+    padding-left: 10px;
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -262,4 +266,19 @@
 .iconTimer{
     position: relative;
     right: 15px;
+}
+
+.timer {
+    padding: 10px;
+}
+
+.timerInputArea {
+    display: flex;
+    align-items: center;
+}
+
+.timerColon {
+    color: white;
+    font-family: monospace;
+    font-size: 24px;
 }
