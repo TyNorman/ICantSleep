@@ -1,0 +1,38 @@
+.timer {
+    --red-colour: #e70012;
+}
+
+.timerControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.timerControlButton {
+    background-color: var(--red-colour);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+}
+
+.iconTimerPlay {
+    position: relative;
+    right: 0px;
+}
+
+.iconTimerStop {
+    position: relative;
+    right: 2px;
+}
+
+.iconTimerPause {
+    position: relative;
+    right: 5px;
+}
