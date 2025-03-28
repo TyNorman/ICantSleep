@@ -1,8 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import React from 'react';
 
-import { SlClock, SlControlPlay, SlControlPause } from "react-icons/sl";
-import { FaStop } from "react-icons/fa6";
+import { FaPlay, FaPause, FaStop } from "react-icons/fa6";
 
 
 import './Timer.css';
@@ -86,13 +85,13 @@ const Timer = () => {
                 <div className="timerInputLabel">Timer</div>
                 <div className="timerRemaining">{formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}</div>
                 <div className="timerInputArea">
-                    <input type="number" value={formatTime(hours)} onChange={changeHours} ref={timerHours} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" defaultValue="0" min="0" max="23"  />
+                    <input type="number" value={formatTime(hours)} onChange={changeHours} ref={timerHours} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" defaultValue="0" min="0" max="23"/>
                     <div className="timerColon">:</div>
-                    <input type="number" value={formatTime(minutes)} onChange={changeMinutes} ref={timerMinutes} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" defaultValue="0" min="0" max="59"  />
+                    <input type="number" value={formatTime(minutes)} onChange={changeMinutes} ref={timerMinutes} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" defaultValue="0" min="0" max="59"/>
                 </div>
                 <div className="timerControls">
-                    {!isTimerRunning ? <button className="timerControlButton" onClick={runTimer}> <SlControlPlay className="iconTimerPlay"/> </button> : <button className="timerControlButton" onClick={pauseTimer}> <SlControlPause className="iconTimerPause"/> </button>}
-                    <button className="timerControlButton"> <FaStop className="iconTimerStop"/></button>
+                    {!isTimerRunning ? <button className="timerControlButton" onClick={runTimer}> <FaPlay className="iconTimerPlay"/> </button> : <button className="timerControlButton" onClick={pauseTimer}> <FaPause className="iconTimerPause"/> </button>}
+                    <button className="timerControlButton" onClick={stopTimer}> <FaStop className="iconTimerStop"/></button>
                 </div>
             </div>
     )

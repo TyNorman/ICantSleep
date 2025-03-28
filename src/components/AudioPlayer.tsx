@@ -16,10 +16,10 @@ import { Timer } from './Timer';
 //TO DO:
 // - Volume slider for music
 // - Show/Hide volume sliders
+// - Fix Duration bar updating
+    // Doesn't update duration when song changes
 
 // SLEEP TIMER
-//  - timer should change while running and update the remaining time as long as it's greater than the previous time
-// - Can play/pause a song independent of the timer setting
 // - Stop music once timer stops
 
 
@@ -29,6 +29,7 @@ const AudioPlayer = () => {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [trackTitle, setTrackTitle] = useState("---");
+    const [trackGame, setTrackGame] = useState("---");
     const [trueSongIndex, setTrueSongIndex] = useState(0); //Actual index of song
 
     //Volume States
@@ -52,13 +53,13 @@ const AudioPlayer = () => {
     const musicPlayer = useRef<HTMLAudioElement>(null); //Reference for audio component to play a song
     const rainPlayer = useRef<HTMLAudioElement>(null);  //Reference to play rain audio
     const progressBar = useRef<HTMLInputElement>(null); //Reference for the current song progress bar
-    const timerHours = useRef<HTMLInputElement>(null); //Reference for the timer hours input
-    const timerMinutes = useRef<HTMLInputElement>(null); //Reference for the timer minutes input
+
     const animationRef = useRef<number>(null); //Reference for animation
 
     //UseEffects
     useEffect(() => { //Initial setup
         window.addEventListener('volumeChange', () => setRainVolume(rainVolume));
+        window.addEventListener('volumeChange', () => setMusicVolume(musicVolume));
         preloadAudio();
     }, []);
 
@@ -96,7 +97,7 @@ const AudioPlayer = () => {
     useEffect(() => { //Change the song when the song index changes
         if (musicPlayer.current && rainPlayer.current && currentSongSrc) {
 
-            musicPlayer.current.src = '/src/assets/audio/'+currentSongSrc;
+            musicPlayer.current.src = '/src/assets/audio/'+ currentSongSrc;
             musicPlayer.current.load();
             console.log("Current song: " + currentSongSrc);
             updateTrackInfo();
@@ -118,9 +119,17 @@ const AudioPlayer = () => {
         }
     }), [rainVolume];
 
+    useEffect(() => {
+        if (musicPlayer.current) {
+            musicPlayer.current.volume = (musicVolume / 100);
+        }
+    }), [musicVolume];
+
     //Functions
     const updateTrackInfo = () => {
         if (musicPlayer.current) {
+            console.log("UpdateTrackInfo()");
+
             const seconds = Math.floor(musicPlayer.current.duration);
             setDuration(seconds);
 
@@ -145,6 +154,7 @@ const AudioPlayer = () => {
     const changeSong= () => {
         setCurrentSongSrc(songList[trueSongIndex].src);
         updateTrackInfo();
+        setTrackGame(songList[trueSongIndex].game);
     }
 
     const toggleSong = () => {
@@ -218,6 +228,10 @@ const AudioPlayer = () => {
         //Show/Hide Volume controls for rain
     }
 
+    const toggleVolumeSong = () => {
+        //Show/Hide Volume controls
+    }
+
     const shuffleSongs = () => {
         var currentIndex = songList.length;
         var shuffleArray = [...songIndexes];
@@ -262,14 +276,22 @@ const AudioPlayer = () => {
             <Timer/>
 
             {/* Rain Volume Slider */}
-            <div className="rainDisplay">
-                <div className="rainVolume" onClick={toggleVolumeRain}>Rain Volume</div>
-                <button className="volumeButton">  <SlVolume2 className="iconVolume"/>  </button>
-                <VolumeSlider volume={rainVolume} setVolume={setRainVolume} />
 
+            <div className="volumeContainer">
+                <div className="volumeDisplay">
+                    <div className="labelVolume">Rain Volume</div>
+                    <button className="volumeButton">  <SlVolume2 className="iconVolume"/> </button>
+                    <VolumeSlider volume={rainVolume} setVolume={setRainVolume} />
+                </div>
+                <div className="volumeDisplay">
+                    <div className="labelVolume">Music Volume</div>
+                    <button className="volumeButton">  <SlVolume2 className="iconVolume"/> </button>
+                    <VolumeSlider volume={musicVolume} setVolume={setMusicVolume} />
+                </div>
             </div>
 
             <div className="trackTitle">{trackTitle}</div>
+            <div className="trackGame">{trackGame}</div>
             <div className="trackDisplay">
 
             {/* Current Time */} 
