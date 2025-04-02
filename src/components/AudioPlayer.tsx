@@ -5,8 +5,9 @@ import './AudioPlayer.css'
 //Icons
 import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff, SlClock } from "react-icons/sl";
 
-import testMusic from '../assets/audio/snes/Donkey Kong Country 2/1-11. Forest Interlude.mp3'
+//import testMusic from '../assets/audio/snes/Donkey Kong Country 2/1-11. Forest Interlude.mp3'
 import testRain from '../assets/audio/rain/20 Rain.mp3'
+import noArt from '../assets/audio/snes/Earthbound/Art.png';
 
 import { useRef, useState, useEffect } from 'react';
 
@@ -26,10 +27,12 @@ import { Timer } from './Timer';
 const AudioPlayer = () => {
     //States
     const [isPlaying, setIsPlaying] = useState(false);
+    const [isDisplayingTimer, setIsDisplayingTimer] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [trackTitle, setTrackTitle] = useState("---");
     const [trackGame, setTrackGame] = useState("---");
+    const [trackArt, setTrackArt] = useState("");
     const [trueSongIndex, setTrueSongIndex] = useState(0); //Actual index of song
 
     //Volume States
@@ -38,7 +41,7 @@ const AudioPlayer = () => {
 
     //List of all songs in the database
     const [songList, setSongList] = useState([
-        { title: "", src: "", game: "", game_system: "" }
+        { title: "", src: "", art: "", game: "", game_system: "" }
     ]);
 
     const [currentSongSrc, setCurrentSongSrc] = useState("");
@@ -63,10 +66,10 @@ const AudioPlayer = () => {
         preloadAudio();
     }, []);
 
-    useEffect(() => { //Update track info when the song has loaded
-        updateTrackInfo();
+    useEffect(() => { //Update track progress bar and duration info when the song has loaded
+        updateDuration();
             
-    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState, trueSongIndex]);
+    }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState]);
 
     //Populate the SongIndexes to randomize
     useEffect(() => {
@@ -110,7 +113,12 @@ const AudioPlayer = () => {
                 rainPlayer.current.pause();
             }
         }
-    }, [currentSongSrc, trueSongIndex]);
+    }, [currentSongSrc]);
+
+
+    useEffect(() => {
+        setCurrentSongSrc(songList[trueSongIndex].src);
+    }, [trueSongIndex]);
 
     //Volume Change useEffects
     useEffect(() => {
@@ -126,20 +134,33 @@ const AudioPlayer = () => {
     }), [musicVolume];
 
     //Functions
-    const updateTrackInfo = () => {
+    const updateDuration = () => {
         if (musicPlayer.current) {
-            console.log("UpdateTrackInfo()");
-
             const seconds = Math.floor(musicPlayer.current.duration);
             setDuration(seconds);
 
             if (progressBar.current) {
                 progressBar.current.max = seconds.toString();
             }
+        }
+    }
+
+    const updateTrackInfo = () => {
+        if (musicPlayer.current) {
+            console.log("UpdateTrackInfo()");
 
             if (musicPlayer.current && musicPlayer.current.src) {
-                const trackTitle = decodeURI(musicPlayer.current.src.split("/").pop() || "---");
+                let trackTitle = decodeURI(musicPlayer.current.src.split("/").pop() || "---");
+
+                trackTitle = trackTitle.replace(".mp3", "");
+
                 setTrackTitle(trackTitle);
+                setTrackGame(songList[trueSongIndex].game);
+
+                console.log("Track art:" + songList[trueSongIndex].art);
+                setTrackArt("/src/assets/audio/" + songList[trueSongIndex].art); 
+
+                updateDuration();
             }
         }
     }
@@ -149,12 +170,6 @@ const AudioPlayer = () => {
         const seconds = Math.floor(secs % 60);
         const returnSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`; //If less than 10 seconds, add a 0 to the front
         return `${minutes}:${returnSeconds}`;
-    }
-
-    const changeSong= () => {
-        setCurrentSongSrc(songList[trueSongIndex].src);
-        updateTrackInfo();
-        setTrackGame(songList[trueSongIndex].game);
     }
 
     const toggleSong = () => {
@@ -185,8 +200,8 @@ const AudioPlayer = () => {
         else
             setCurrentRandIndex(songIndexes.length - 1);
 
+        console.log("previousSong() - " + songIndexes[currentRandIndex]);
         setTrueSongIndex(songIndexes[currentRandIndex]);
-        changeSong();
     }
 
     const nextSong = () => {
@@ -195,8 +210,9 @@ const AudioPlayer = () => {
         else
             setCurrentRandIndex(0);
 
+
+        console.log("nextSong() - " + songIndexes[currentRandIndex]);
         setTrueSongIndex(songIndexes[currentRandIndex]);
-        changeSong();
     }
 
     const changeRange = () => { //Function to change the range slider
@@ -205,6 +221,11 @@ const AudioPlayer = () => {
             musicPlayer.current.currentTime = currentProgress;
             changePlayerCurrentTime();
         }
+    }
+
+    const toggleTimer = () => { //Function to show/hide the timer
+        const prevValue = isDisplayingTimer;
+        setIsDisplayingTimer(!prevValue);
     }
 
     const whilePlaying = () => { //Function to animate seconds counter every 1 sec tick
@@ -270,10 +291,13 @@ const AudioPlayer = () => {
         <div className="audioPlayer">
            {/* HTMLAudioElement audio tracks */}
             <audio ref={rainPlayer} src={testRain} preload="metadata"></audio>
-            <audio ref={musicPlayer} src={testMusic} preload="metadata" onEnded={handleSongEnded}></audio>
+            <audio ref={musicPlayer} src={currentSongSrc ? currentSongSrc : undefined} preload="metadata" onEnded={handleSongEnded}></audio>
 
             {/* Timer */}
-            <Timer/>
+            <div className="timerArea">
+                <button className="timerButton" onClick={toggleTimer}>  <SlClock className="iconTimer"/> </button>
+                {isDisplayingTimer && <Timer/>}
+            </div>
 
             {/* Rain Volume Slider */}
 
@@ -290,6 +314,7 @@ const AudioPlayer = () => {
                 </div>
             </div>
 
+            <img className="albumImg" src={trackArt ? trackArt : noArt}></img>
             <div className="trackTitle">{trackTitle}</div>
             <div className="trackGame">{trackGame}</div>
             <div className="trackDisplay">

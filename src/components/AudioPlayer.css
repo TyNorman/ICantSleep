@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 700px;
 }
 
 .trackDisplay {
@@ -16,7 +15,7 @@
     color: white;
     font-family: monospace;
     font-size: 24px;
-    margin-top: 20px;
+    margin: 20px 10px 0 10px;
     text-align: center;
 }
 
@@ -26,6 +25,15 @@
     font-size: 20px;
     text-align: center;
     margin-bottom: 20px;
+}
+
+.albumImg {
+    width: 300px;
+    height: 300px;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    object-fit: cover;
+    object-position: 10% 100%;
 }
 
 .timeDisplay {
@@ -282,11 +290,12 @@
     font-size: 32px;
     justify-content: center;
     align-items: center;
+    z-index: 5;
 }
 
 .iconTimer{
     position: relative;
-    right: 15px;
+    right: 16px;
 }
 
 .timer {
@@ -304,3 +313,14 @@
     font-size: 24px;
 }
 
+.timerArea {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.timerPanel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

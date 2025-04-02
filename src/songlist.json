@@ -2,24 +2,28 @@
     {
         "title": "Forest Interlude",
         "src": "snes/Donkey Kong Country 2/1-11. Forest Interlude.mp3",
+        "art": "snes/Donkey Kong Country 2/Art.png",
         "game": "Donkey Kong Country 2",
         "game_system": "SNES"
     },
     {
         "title": "Stickerbrush Symphony",
         "src": "snes/Donkey Kong Country 2/1-18. Stickerbrush Symphony.mp3",
+        "art": "snes/Donkey Kong Country 2/Art.png",
         "game": "Donkey Kong Country 2",
         "game_system": "SNES"
     },
     {
         "title": "Library - Collection Space (Block 7 - Storeroom)",
         "src": "snes/Super Castlevania IV/20. Library - Collection Space (Block 7 - Storeroom).mp3",
+        "art": "snes/Super Castlevania IV/Art.png",
         "game": "Super Castlevania IV",
         "game_system": "SNES"
     },
     {
         "title": "Snowman",
         "src": "snes/Earthbound/82 Snowman.mp3",
+        "art": "snes/Earthbound/Art.png",
         "game": "Earthbound",
         "game_system": "SNES"
     }
