@@ -7,10 +7,10 @@ import { FaPlay, FaPause, FaStop } from "react-icons/fa6";
 import './Timer.css';
 
 interface TimerProps {
-
+    onTimerComplete: () => void; // Define the type for the prop
 }
 
-const Timer = () => {
+const Timer : React.FC<TimerProps> = ({ onTimerComplete }) => {
 
     const timerHours = useRef<HTMLInputElement>(null); //Reference for the timer hours input
     const timerMinutes = useRef<HTMLInputElement>(null); //Reference for the timer minutes input
@@ -75,6 +75,11 @@ const Timer = () => {
                 setMinutes(59);
                 setSeconds(59);
                 }
+                else {
+                    setIsTimerRunning(false);
+                    if (onTimerComplete)
+                        onTimerComplete(); // Call the callback function when the timer completes
+                }
             }, 1000); //Run the interval every second
         }
     return () => clearInterval(interval);
@@ -85,9 +90,9 @@ const Timer = () => {
                 <div className="timerInputLabel">Timer</div>
                 <div className="timerRemaining">{formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}</div>
                 <div className="timerInputArea">
-                    <input type="number" value={formatTime(hours)} onChange={changeHours} ref={timerHours} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" defaultValue="0" min="0" max="23"/>
+                    <input type="number" value={formatTime(hours)} onChange={changeHours} ref={timerHours} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" min="0" max="23"/>
                     <div className="timerColon">:</div>
-                    <input type="number" value={formatTime(minutes)} onChange={changeMinutes} ref={timerMinutes} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" defaultValue="0" min="0" max="59"/>
+                    <input type="number" value={formatTime(minutes)} onChange={changeMinutes} ref={timerMinutes} className="timerInput rounded-sm border-1 border-solid border-white bg-gradient-to-t from-stone-900 to-slate-700" min="0" max="59"/>
                 </div>
                 <div className="timerControls">
                     {!isTimerRunning ? <button className="timerControlButton" onClick={runTimer}> <FaPlay className="iconTimerPlay"/> </button> : <button className="timerControlButton" onClick={pauseTimer}> <FaPause className="iconTimerPause"/> </button>}
@@ -95,6 +100,6 @@ const Timer = () => {
                 </div>
             </div>
     )
-}
+};
 
-export { Timer }
+export { Timer };

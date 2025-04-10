@@ -15,13 +15,16 @@ import { VolumeSlider } from './VolumeSlider';
 import { Timer } from './Timer';
 
 //TO DO:
-// - Volume slider for music
 // - Show/Hide volume sliders
 // - Fix Duration bar updating
     // Doesn't update duration when song changes
 
 // SLEEP TIMER
 // - Stop music once timer stops
+
+// CONTENT
+// - Add a shitload of music
+// - Good idea to implement a visible playlist with functionality
 
 
 const AudioPlayer = () => {
@@ -63,6 +66,7 @@ const AudioPlayer = () => {
     useEffect(() => { //Initial setup
         window.addEventListener('volumeChange', () => setRainVolume(rainVolume));
         window.addEventListener('volumeChange', () => setMusicVolume(musicVolume));
+        window.addEventListener('timerComplete', () => onTimerComplete());
         preloadAudio();
     }, []);
 
@@ -273,6 +277,17 @@ const AudioPlayer = () => {
         nextSong();
     }
 
+    const onTimerComplete = () => { 
+        console.log("Timer has completed!");
+        setIsPlaying(false); // Stop the music
+        if (musicPlayer.current) {
+            musicPlayer.current.pause();
+        }
+        if (rainPlayer.current) {
+            rainPlayer.current.pause();
+        }
+    }
+
     //Preloading
     const preloadAudio = async () => {
         try {
@@ -296,7 +311,7 @@ const AudioPlayer = () => {
             {/* Timer */}
             <div className="timerArea">
                 <button className="timerButton" onClick={toggleTimer}>  <SlClock className="iconTimer"/> </button>
-                {isDisplayingTimer && <Timer/>}
+                {isDisplayingTimer && <Timer onTimerComplete={onTimerComplete}/>}
             </div>
 
             {/* Rain Volume Slider */}
