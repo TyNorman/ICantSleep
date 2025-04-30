@@ -290,7 +290,28 @@
     font-size: 32px;
     justify-content: center;
     align-items: center;
-    z-index: 5;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.timerBar {
+    background-color: var(--red-colour);
+    border: none;
+    border-top-left-radius: 25% 50%;
+    border-bottom-left-radius: 25% 50%;
+    width: 150px;
+    height: 75px;
+    font-size: 32px;
+    margin-right: 40px;
+    padding-right: 175px;
+    align-content: center;
+}
+
+.timerRemaining {
+    position: relative;
+    margin-right: 400px;
+    vertical-align: middle;
 }
 
 .iconTimer{
