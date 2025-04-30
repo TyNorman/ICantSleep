@@ -2,15 +2,17 @@ import { useRef, useState, useEffect } from 'react';
 import React from 'react';
 
 import { FaPlay, FaPause, FaStop } from "react-icons/fa6";
+import { SlClose } from "react-icons/sl";
 
 
 import './Timer.css';
 
 interface TimerProps {
-    onTimerComplete: () => void; // Define the type for the prop
+    onTimerComplete: () => void;
+    onQuit: () => void;
 }
 
-const Timer : React.FC<TimerProps> = ({ onTimerComplete }) => {
+const Timer : React.FC<TimerProps> = ({ onTimerComplete, onQuit }) => {
 
     const timerHours = useRef<HTMLInputElement>(null); //Reference for the timer hours input
     const timerMinutes = useRef<HTMLInputElement>(null); //Reference for the timer minutes input
@@ -54,6 +56,10 @@ const Timer : React.FC<TimerProps> = ({ onTimerComplete }) => {
         setSeconds(0);
     }
 
+    const toggleTimer = () => {
+
+    }
+
     // Helper function to format time values
     const formatTime = (value: number) => {
         return value < 10 ? `0${value}` : value.toString();
@@ -87,6 +93,7 @@ const Timer : React.FC<TimerProps> = ({ onTimerComplete }) => {
 
     return(
         <div className="timer rounded-xl border-2 border-solid border-white bg-gradient-to-t from-slate-900 to-zinc-600">
+                <button className="timerQuitButton" onClick={onQuit}>  <SlClose className="iconClose"/>  </button>
                 <div className="timerInputLabel">Timer</div>
                 <div className="timerRemaining">{formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}</div>
                 <div className="timerInputArea">

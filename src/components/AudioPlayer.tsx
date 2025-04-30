@@ -28,17 +28,19 @@ import { Timer } from './Timer';
 
 
 const AudioPlayer = () => {
-    //States
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isDisplayingTimer, setIsDisplayingTimer] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [trackTitle, setTrackTitle] = useState("---");
-    const [trackGame, setTrackGame] = useState("---");
-    const [trackArt, setTrackArt] = useState("");
+    //Song states
+    const [isPlaying, setIsPlaying] = useState(false); //Current song playing
+    const [currentTime, setCurrentTime] = useState(0); //Current time of song
+    const [duration, setDuration] = useState(0); //Duration of current song
+    const [trackTitle, setTrackTitle] = useState("---"); //Current song title
+    const [trackGame, setTrackGame] = useState("---"); //Current song game/album
+    const [trackArt, setTrackArt] = useState(""); //Current song art
     const [trueSongIndex, setTrueSongIndex] = useState(0); //Actual index of song
 
-    //Volume States
+    //Timer display states
+    const [isDisplayingTimer, setIsDisplayingTimer] = useState(false); //Timer display panel
+
+    //Volume states
     const [rainVolume, setRainVolume] = useState(50);
     const [musicVolume, setMusicVolume] = useState(50);
 
@@ -230,6 +232,7 @@ const AudioPlayer = () => {
     const toggleTimer = () => { //Function to show/hide the timer
         const prevValue = isDisplayingTimer;
         setIsDisplayingTimer(!prevValue);
+
     }
 
     const whilePlaying = () => { //Function to animate seconds counter every 1 sec tick
@@ -310,8 +313,8 @@ const AudioPlayer = () => {
 
             {/* Timer */}
             <div className="timerArea">
-                <button className="timerButton" onClick={toggleTimer}>  <SlClock className="iconTimer"/> </button>
-                {isDisplayingTimer && <Timer onTimerComplete={onTimerComplete}/>}
+            {!isDisplayingTimer && <button className="timerButton" onClick={toggleTimer}>  <SlClock className="iconTimer"/> </button>}
+                {isDisplayingTimer && <Timer onTimerComplete={onTimerComplete} onQuit={() => setIsDisplayingTimer(false)} />}
             </div>
 
             {/* Rain Volume Slider */}

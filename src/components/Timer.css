@@ -41,3 +41,24 @@
     position: relative;
     right: 6px;
 }
+
+.timerQuitButton {
+    color: white;
+    background-color: transparent;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    padding: 0px;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconClose {
+    position: relative;
+    top: 0px;
+    left: 4px;
+}
