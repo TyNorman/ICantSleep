@@ -211,12 +211,13 @@
     background: var(--selected-knob);
 }
 
-//Volume Controls for Rain/Music
+/* Volume Controls for Rain/Music */
 .volumeContainer {
-    border: 3px solid #fff;
+    position: relative;
+    /*border: 3px solid #fff;*/
     padding: 20px;
     display: inline-flex;
-    flex-direction: row;
+    flex-direction: column;
     box-sizing: border-box; 
     gap: 20px;
 }
@@ -335,7 +336,7 @@
 }
 
 .timerArea {
-    position: absolute;
+    position: fixed;
     top: 10px;
     right: 10px;
 }

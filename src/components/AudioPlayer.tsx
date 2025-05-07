@@ -2,6 +2,11 @@
 
 import './AudioPlayer.css'
 
+//Redux
+import { useDispatch, useSelector } from 'react-redux';
+import { changeHours, changeMinutes, runTimer, stopTimer, pauseTimer, tickTimer } from '../features/timer/timerSlice';
+import { RootState } from '../app/store';
+
 //Icons
 import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff, SlClock } from "react-icons/sl";
 
@@ -41,12 +46,6 @@ const AudioPlayer = () => {
     //Timer display states
     const [isDisplayingTimer, setIsDisplayingTimer] = useState(false); //Timer display panel
 
-    //Timer
-    const [hours, setHours] = useState(0);
-    const [minutes, setMinutes] = useState(0);
-    const [seconds, setSeconds] = useState(0);
-    const [isTimerRunning, setIsTimerRunning] = useState(false);
-
     //Volume states
     const [rainVolume, setRainVolume] = useState(50);
     const [musicVolume, setMusicVolume] = useState(50);
@@ -70,6 +69,10 @@ const AudioPlayer = () => {
     const progressBar = useRef<HTMLInputElement>(null); //Reference for the current song progress bar
 
     const animationRef = useRef<number>(null); //Reference for animation
+
+    //Redux hooks for the Timer
+    const dispatch = useDispatch(); 
+    const {hours, minutes, seconds, isRunning} = useSelector((state: RootState) => state.timer); //Get the timer values from the Redux store
 
     //UseEffects
     useEffect(() => { //Initial setup
@@ -147,69 +150,25 @@ const AudioPlayer = () => {
     }), [musicVolume];
 
     //#region Timer
+
     useEffect(() => {
         let interval = 0;
 
-        if (isTimerRunning) {
+        if (isRunning) { //Use the Redux timer to update the timer values every interval tick
             interval = setInterval(() => {
-                if (seconds > 0)
-                    setSeconds((seconds) => seconds - 1);
-                else if (minutes > 0) {
-                    setMinutes((minutes) => minutes - 1);
-                    setSeconds(59);
-                }
-            else if (hours > 0) {
-                setHours((hours) => hours - 1);
-                setMinutes(59);
-                setSeconds(59);
-                }
-                else {
-                    setIsTimerRunning(false);
-                    if (onTimerComplete)
-                        onTimerComplete(); // Call the callback function when the timer completes
-                }
-            }, 1000); //Run the interval every second
+                dispatch(tickTimer());
+            }, 1000);
         }
-    return () => clearInterval(interval);
-    } , [hours, minutes, seconds, isTimerRunning]);
 
-    //Input Event Handlers
-    const changeHours = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setHours(Number(event.target.value));
-        setSeconds(0);
-    }
-
-    const changeMinutes = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setMinutes(Number(event.target.value));
-        setSeconds(0);
-    }
-
-    //Timer Start/Pause/Stop Functions
-    const runTimer = () => {
-        console.log("runTimer()");
-        if (hours != 0 || minutes != 0 || seconds != 0) {
-            setIsTimerRunning(true);
-        } else {
-            setIsTimerRunning(false);
-            window.alert("Please enter a valid time");
-        }
-    }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [hours, minutes, seconds, isRunning]);
 
     // Helper function to format time values
     const formatTime = (value: number) => {
         return value < 10 ? `0${value}` : value.toString();
     };
-
-    const pauseTimer = () => {
-        setIsTimerRunning(false);
-    }
-
-    const stopTimer = () => {
-        setIsTimerRunning(false);
-        setHours(0);
-        setMinutes(0);
-        setSeconds(0);
-    }
     //#endregion
 
     //Functions
@@ -390,9 +349,7 @@ const AudioPlayer = () => {
             <div className="timerRemaining">{formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}</div>
                 <button className="timerButton" onClick={toggleTimer}>  <SlClock className="iconTimer"/> </button>
                 </div>
-            {isDisplayingTimer && <Timer onTimerComplete={onTimerComplete} onQuit={() => setIsDisplayingTimer(false)} 
-                                                            formatTime={formatTime} changeHours={changeHours} changeMinutes={changeMinutes} 
-                                                            runTimer={runTimer} stopTimer={stopTimer} pauseTimer={pauseTimer} isTimerRunning={isTimerRunning} />}
+            {isDisplayingTimer && <Timer onTimerComplete={onTimerComplete} onQuit={() => setIsDisplayingTimer(false)} />}
             </div>
 
             {/* Rain Volume Slider */}
