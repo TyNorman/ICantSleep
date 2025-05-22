@@ -5,14 +5,14 @@ import './AudioPlayer.css'
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { changeHours, changeMinutes, runTimer, stopTimer, pauseTimer, tickTimer } from '../features/timer/timerSlice';
-import { RootState } from '../app/store';
+import { RootState } from './store';
 
 //Icons
 import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff, SlClock } from "react-icons/sl";
 
 //import testMusic from '../assets/audio/snes/Donkey Kong Country 2/1-11. Forest Interlude.mp3'
 import testRain from '../assets/audio/rain/20 Rain.mp3'
-import noArt from '../assets/audio/snes/Earthbound/Art.png';
+import noArt from '../assets/audio/snes/NoArt.png';
 
 import { useRef, useState, useEffect } from 'react';
 
@@ -20,9 +20,9 @@ import { VolumeSlider } from './VolumeSlider';
 import { Timer } from './Timer';
 
 //TO DO:
-// - Show/Hide volume sliders
 // - Fix Duration bar updating
     // Doesn't update duration when song changes
+    // Bar fill doesn't update (duration might not be updated?)
 
 // SLEEP TIMER
 // - Display timer on the main AudioPlayer
@@ -188,15 +188,15 @@ const AudioPlayer = () => {
             console.log("UpdateTrackInfo()");
 
             if (musicPlayer.current && musicPlayer.current.src) {
-                let trackTitle = decodeURI(musicPlayer.current.src.split("/").pop() || "---");
-
-                trackTitle = trackTitle.replace(".mp3", "");
-
-                setTrackTitle(trackTitle);
+                setTrackTitle(songList[trueSongIndex].title);
                 setTrackGame(songList[trueSongIndex].game);
 
                 console.log("Track art:" + songList[trueSongIndex].art);
-                setTrackArt("/src/assets/audio/" + songList[trueSongIndex].art); 
+
+                if (songList[trueSongIndex].art != "")
+                    setTrackArt("/src/assets/audio/" + songList[trueSongIndex].art); 
+                else
+                    setTrackArt("");
 
                 updateDuration();
             }
