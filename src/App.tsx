@@ -32,7 +32,7 @@ function App() {
 
   return (
     <>
-    <div className="min-h-screen min-w-screen bg-cover flex items-center justify-center bg-gradient-to-t from-slate-900 to-slate-700">
+    <div className="min-h-screen min-w-screen bg-cover flex items-center justify-center bg-gradient-to-b from-slate-850 to-slate-900">
       <AudioPlayer />
   </div>
   </>

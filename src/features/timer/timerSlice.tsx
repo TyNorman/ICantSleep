@@ -1,7 +1,6 @@
     import { createSlice, PayloadAction } from '@reduxjs/toolkit';
     import { useEffect } from 'react';
 
-
     
     const initialState: TimerState = {
         hours: 0,

@@ -5,7 +5,7 @@ import './AudioPlayer.css'
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { changeHours, changeMinutes, runTimer, stopTimer, pauseTimer, tickTimer } from '../features/timer/timerSlice';
-import { RootState } from './store';
+import { RootState } from '../store';
 
 //Icons
 import { SlControlPlay, SlControlPause, SlControlForward, SlControlRewind, SlVolume1, SlVolume2, SlVolumeOff, SlClock } from "react-icons/sl";
@@ -18,6 +18,7 @@ import { useRef, useState, useEffect } from 'react';
 
 import { VolumeSlider } from './VolumeSlider';
 import { Timer } from './Timer';
+import { PlaylistItem } from './PlaylistItem'; 
 
 //TO DO:
 // - Fix Duration bar updating
@@ -390,6 +391,20 @@ const AudioPlayer = () => {
                     { isPlaying ? <SlControlPause className="iconPause" /> : <SlControlPlay className="iconPlay"/> }
                 </button>
                 <button className="previousNextButton" onClick={nextSong}> <SlControlForward className="iconForward"/> </button>
+            </div>
+
+            <div className="playlistContainer">
+                <h2 className="playlistTitle">Playlist</h2>
+                <div className="playlistItems">
+                    {songList.map((song, index) => (
+                        <PlaylistItem 
+                            key={index} 
+                            title={song.title} 
+                            game={song.game} 
+                            art={song.art ? song.art : noArt}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     )
