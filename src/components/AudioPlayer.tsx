@@ -55,6 +55,10 @@ const AudioPlayer = () => {
     const [songList, setSongList] = useState([
         { title: "", src: "", art: "", game: "", game_system: "" }
     ]);
+    //Current playlist of songs after shuffling
+    const [playlist, setPlaylist] = useState([
+        { title: "", src: "", art: "", game: "", game_system: "" }
+    ]);
 
     const [currentSongSrc, setCurrentSongSrc] = useState("");
     const [currentSong, setCurrentSong] = useState({});
@@ -111,6 +115,10 @@ const AudioPlayer = () => {
                 setTrueSongIndex(songIndexes[currentRandIndex]);
                 setCurrentSongSrc(songList[songIndexes[currentRandIndex]].src); // Set the current song to the first song in the list
             }
+
+            // Update playlist now that the songIndexes have been shuffled
+            const newPlaylist = songIndexes.map(index => songList[index]);
+            setPlaylist(newPlaylist);
         }
     }, [songIndexes, hasInitializedShuffle]);
 
@@ -396,7 +404,7 @@ const AudioPlayer = () => {
             <div className="playlistContainer">
                 <h2 className="playlistTitle">Playlist</h2>
                 <div className="playlistItems">
-                    {songList.map((song, index) => (
+                    {playlist.map((song, index) => (
                         <PlaylistItem 
                             key={index} 
                             title={song.title} 
