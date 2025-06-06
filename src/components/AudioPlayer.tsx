@@ -42,14 +42,14 @@ const AudioPlayer = () => {
     const [trackTitle, setTrackTitle] = useState("---"); //Current song title
     const [trackGame, setTrackGame] = useState("---"); //Current song game/album
     const [trackArt, setTrackArt] = useState(""); //Current song art
-    const [trueSongIndex, setTrueSongIndex] = useState(0); //Actual index of song
+    const [currentSongIndex, setCurrentSongIndex] = useState(0); //Index of the current song in the current playlist
 
     //Timer display states
     const [isDisplayingTimer, setIsDisplayingTimer] = useState(false); //Timer display panel
 
     //Volume states
-    const [rainVolume, setRainVolume] = useState(50);
-    const [musicVolume, setMusicVolume] = useState(50);
+    const [rainVolume, setRainVolume] = useState(100);
+    const [musicVolume, setMusicVolume] = useState(100);
 
     //List of all songs in the database
     const [songList, setSongList] = useState([
@@ -64,8 +64,6 @@ const AudioPlayer = () => {
     const [currentSong, setCurrentSong] = useState({});
 
     //Song randomization
-    const [songIndexes, setSongIndexes] = useState<number[]>([]); //Array of song indexes to randomize the song list
-    const [currentRandIndex, setCurrentRandIndex] = useState(0); //Current index of the randomized song list
     const [hasInitializedShuffle, setInitShuffle] = useState(false); // Flag to indicate if songs have been shuffled
 
     //References
@@ -92,35 +90,21 @@ const AudioPlayer = () => {
             
     }, [musicPlayer?.current?.onloadedmetadata, musicPlayer?.current?.readyState]);
 
-    //Populate the SongIndexes to randomize
-    useEffect(() => {
-        if (songList.length > 0 && songList[trueSongIndex].title !== "") {
+    useEffect(() => { //Randomize the SongIndexes to create a shuffled playlist
+        if (songList.length > 0 && songList[currentSongIndex].title !== "") {
             console.log('Updated songList:', songList);
 
-            //Shuffle
-             // Create and set song indexes
-             const indexes = songList.map((_, index) => index);
-             setSongIndexes(indexes);
-        }
-    }, [songList]);
-
-    useEffect(() => { //Randomize the SongIndexes to create a shuffled playlist
-        if (songIndexes.length > 0) {
             if (!hasInitializedShuffle) { //Shuffle the playlist and set the flag to true
+                console.log("Shuffling songs...");
                 shuffleSongs();
                 setInitShuffle(true);
             }
             else { //Start with a randomized song
-                console.log("Init song - songIndexes: " + songIndexes);
-                setTrueSongIndex(songIndexes[currentRandIndex]);
-                setCurrentSongSrc(songList[songIndexes[currentRandIndex]].src); // Set the current song to the first song in the list
+                console.log("Init song - currentSongIndex: " + currentSongIndex);
+                setCurrentSongSrc(playlist[currentSongIndex].src); // Set the current song to the first song in the list
             }
-
-            // Update playlist now that the songIndexes have been shuffled
-            const newPlaylist = songIndexes.map(index => songList[index]);
-            setPlaylist(newPlaylist);
         }
-    }, [songIndexes, hasInitializedShuffle]);
+    }, [songList, hasInitializedShuffle]);
 
     useEffect(() => { //Change the song when the song index changes
         if (musicPlayer.current && rainPlayer.current && currentSongSrc) {
@@ -142,8 +126,9 @@ const AudioPlayer = () => {
 
 
     useEffect(() => {
-        setCurrentSongSrc(songList[trueSongIndex].src);
-    }, [trueSongIndex]);
+        setCurrentSongSrc(playlist[currentSongIndex].src);
+        console.log("Current song useEffect(): " + playlist[currentSongIndex].title);
+    }, [currentSongIndex]);
 
     //Volume Change useEffects
     useEffect(() => {
@@ -197,13 +182,13 @@ const AudioPlayer = () => {
             console.log("UpdateTrackInfo()");
 
             if (musicPlayer.current && musicPlayer.current.src) {
-                setTrackTitle(songList[trueSongIndex].title);
-                setTrackGame(songList[trueSongIndex].game);
+                setTrackTitle(playlist[currentSongIndex].title);
+                setTrackGame(playlist[currentSongIndex].game);
 
-                console.log("Track art:" + songList[trueSongIndex].art);
+                console.log("Track art:" + playlist[currentSongIndex].art);
 
-                if (songList[trueSongIndex].art != "")
-                    setTrackArt("/src/assets/audio/" + songList[trueSongIndex].art); 
+                if (playlist[currentSongIndex].art != "")
+                    setTrackArt("/src/assets/audio/" + playlist[currentSongIndex].art); 
                 else
                     setTrackArt("");
 
@@ -241,25 +226,21 @@ const AudioPlayer = () => {
         
     }
 
-    const previousSong = () => {
-        if (currentRandIndex > 0)
-            setCurrentRandIndex(currentRandIndex - 1);
-        else
-            setCurrentRandIndex(songIndexes.length - 1);
 
-        console.log("previousSong() - " + songIndexes[currentRandIndex]);
-        setTrueSongIndex(songIndexes[currentRandIndex]);
+    const previousSong = () => {
+        if (currentSongIndex > 0) {
+            setCurrentSongIndex(currentSongIndex - 1);
+        } else {
+            setCurrentSongIndex(playlist.length - 1);
+        }
     }
 
     const nextSong = () => {
-        if (currentRandIndex < songIndexes.length - 1)
-            setCurrentRandIndex(currentRandIndex + 1);
-        else
-            setCurrentRandIndex(0);
-
-
-        console.log("nextSong() - " + songIndexes[currentRandIndex]);
-        setTrueSongIndex(songIndexes[currentRandIndex]);
+        if (currentSongIndex < playlist.length - 1) {
+            setCurrentSongIndex(currentSongIndex + 1);
+        } else {
+            setCurrentSongIndex(0);
+        }
     }
 
     const changeRange = () => { //Function to change the range slider
@@ -303,17 +284,19 @@ const AudioPlayer = () => {
 
     const shuffleSongs = () => {
         var currentIndex = songList.length;
-        var shuffleArray = [...songIndexes];
-        
+
+        var shuffledSongs = [...songList];
+
         while (currentIndex != 0) {
             var randIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
 
-            [shuffleArray[currentIndex], shuffleArray[randIndex]] = [
-                shuffleArray[randIndex], shuffleArray[currentIndex]];
+            [shuffledSongs[currentIndex], shuffledSongs[randIndex]] = [
+                shuffledSongs[randIndex], shuffledSongs[currentIndex]];
         }
 
-        setSongIndexes(shuffleArray);
+        console.log("Shuffled songs: " + shuffledSongs[0].title);
+        setPlaylist(shuffledSongs); // Set the shuffled playlist
     }
 
     const handleSongEnded = () => {

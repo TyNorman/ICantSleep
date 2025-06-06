@@ -8,7 +8,7 @@
 
 .volumeBar {
     --knob: white;
-    --vol-before-width: 50%;
+    --vol-before-width: 100%;
     --vol-before-color: white;
     --bar-bg: darkgrey;
 

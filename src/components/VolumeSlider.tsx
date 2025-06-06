@@ -21,7 +21,7 @@ const VolumeSlider: React.FC<VolumeSliderProps> = ({ volume, setVolume })  => {
     return(
         <div className="volumeSlider">
             <div>
-                <input type="range" className="volumeBar" defaultValue="50" ref={volumeBar} onChange={changeVolume}/>
+                <input type="range" className="volumeBar" defaultValue="100" ref={volumeBar} onChange={changeVolume}/>
             </div>
         </div>
     )

@@ -2,28 +2,28 @@
     {
         "title": "Memories of Green",
         "src": "snes/Chrono Trigger/105 Memories of Green.mp3",
-        "art": "",
+        "art": "snes/Chrono Trigger/Art.png",
         "game": "Chrono Trigger",
         "game_system": "SNES"
     },
     {
         "title": "Wind Scene",
         "src": "snes/Chrono Trigger/109 Wind Scene.mp3",
-        "art": "",
+        "art": "snes/Chrono Trigger/Art.png",
         "game": "Chrono Trigger",
         "game_system": "SNES"
     },
     {
         "title": "Corridors of Time",
         "src": "snes/Chrono Trigger/304 Corridors of Time.mp3",
-        "art": "",
+        "art": "snes/Chrono Trigger/Art.png",
         "game": "Chrono Trigger",
         "game_system": "SNES"
     },
     {
         "title": "Schala's Theme",
         "src": "snes/Chrono Trigger/306 Schala's Theme.mp3",
-        "art": "",
+        "art": "snes/Chrono Trigger/Art.png",
         "game": "Chrono Trigger",
         "game_system": "SNES"
     },
@@ -31,7 +31,7 @@
     {
         "title": "Snowy Valley",
         "src": "snes/Disney's Magical Quest/08 Snowy Valley.mp3",
-        "art": "",
+        "art": "snes/Disney's Magical Quest/Art.png",
         "game": "The Magical Quest Starring Mickey Mouse",
         "game_system": "SNES"
     },
@@ -97,7 +97,7 @@
     {
         "title": "Save Hut",
         "src": "snes/Kirby Super Star/5-35. Save Hut.mp3",
-        "art": "",
+        "art": "snes/Kirby Super Star/Art.png",
         "game": "Kirby Super Star",
         "game_system": "SNES"
     },
@@ -105,21 +105,21 @@
     {
         "title": "Village",
         "src": "snes/Sim City/08. Village.mp3",
-        "art": "",
+        "art": "snes/Sim City/Art.png",
         "game": "Sim City",
         "game_system": "SNES"
     },
     {
         "title": "Town",
         "src": "snes/Sim City/09. Town.mp3",
-        "art": "",
+        "art": "snes/Sim City/Art.png",
         "game": "Sim City",
         "game_system": "SNES"
     },
     {
         "title": "City",
         "src": "snes/Sim City/10. City.mp3",
-        "art": "",
+        "art": "snes/Sim City/Art.png",
         "game": "Sim City",
         "game_system": "SNES"
     },
@@ -127,7 +127,7 @@
     {
         "title": "Intro",
         "src": "snes/Super Black Bass 2/01 Intro.mp3",
-        "art": "",
+        "art": "snes/Super Black Bass 2/Art.png",
         "game": "Super Black Bass 2",
         "game_system": "SNES"
     },
@@ -143,14 +143,14 @@
     {
         "title": "Beware the Forest's Mushrooms",
         "src": "snes/Super Mario RPG/1-28 Beware the Forest's Mushrooms.mp3",
-        "art": "",
+        "art": "snes/Super Mario RPG/Art.png",
         "game": "Super Mario RPG",
         "game_system": "SNES"
     },
     {
         "title": "This Is Booster Tower",
         "src": "snes/Super Mario RPG/1-35 Welcome to Bukki Tower.mp3",
-        "art": "",
+        "art": "snes/Super Mario RPG/Art.png",
         "game": "Super Mario RPG",
         "game_system": "SNES"
     },
@@ -158,21 +158,21 @@
     {
         "title": "Swimming",
         "src": "snes/Super Mario World/24. Swimming.mp3",
-        "art": "",
+        "art": "snes/Super Mario World/Art.png",
         "game": "Super Mario World",
         "game_system": "SNES"
     },
     {
         "title": "Haunted House",
         "src": "snes/Super Mario World/28. Haunted House.mp3",
-        "art": "",
+        "art": "snes/Super Mario World/Art.png",
         "game": "Super Mario World",
         "game_system": "SNES"
     },
     {
         "title": "Fortress",
         "src": "snes/Super Mario World/30. Fortress.mp3",
-        "art": "",
+        "art": "snes/Super Mario World/Art.png",
         "game": "Super Mario World",
         "game_system": "SNES"
     },
@@ -180,35 +180,35 @@
     {
         "title": "Planet Zebes ~ Arrival on Crateria",
         "src": "snes/Super Metroid/03. Planet Zebes ~ Arrival on Crateria.mp3",
-        "art": "",
+        "art": "snes/Super Metroid/Art.png",
         "game": "Super Metroid",
         "game_system": "SNES"
     },
     {
         "title": "Brinstar Red Soil Swampy Area",
         "src": "snes/Super Metroid/06. Brinstar Red Soil Swampy Area.mp3",
-        "art": "",
+        "art": "snes/Super Metroid/Art.png",
         "game": "Super Metroid",
         "game_system": "SNES"
     },
     {
         "title": "Wrecked Ship",
         "src": "snes/Super Metroid/09. Wrecked Ship.mp3",
-        "art": "",
+        "art": "snes/Super Metroid/Art.png",
         "game": "Super Metroid",
         "game_system": "SNES"
     },
     {
         "title": "Maridia Rocky Underwater Area",
         "src": "snes/Super Metroid/10. Maridia Rocky Underwater Area.mp3",
-        "art": "",
+        "art": "snes/Super Metroid/Art.png",
         "game": "Super Metroid",
         "game_system": "SNES"
     },
     {
         "title": "Maridia Drifting Sand Underwater Area",
         "src": "snes/Super Metroid/11. Maridia Drifting Sand Underwater Area.mp3",
-        "art": "",
+        "art": "snes/Super Metroid/Art.png",
         "game": "Super Metroid",
         "game_system": "SNES"
     },
@@ -216,7 +216,7 @@
     {
         "title": "Sanctuary Dungeon",
         "src": "snes/The Legend of Zelda A Link to the Past/16. Sanctuary Dungeon.mp3",
-        "art": "",
+        "art": "snes/The Legend of Zelda A Link to the Past/Art.png",
         "game": "The Legend of Zelda: A Link to the Past",
         "game_system": "SNES"
     },
@@ -224,14 +224,14 @@
     {
         "title": "Menu",
         "src": "snes/Waterworld/02 Menu.mp3",
-        "art": "",
+        "art": "snes/Waterworld/Art.png",
         "game": "Waterworld",
         "game_system": "SNES"
     },
     {
         "title": "Map",
         "src": "snes/Waterworld/03 Map.mp3",
-        "art": "",
+        "art": "snes/Waterworld/Art.png",
         "game": "Waterworld",
         "game_system": "SNES"
     }
